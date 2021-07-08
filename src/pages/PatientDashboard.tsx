@@ -6,6 +6,7 @@ import EnableSwitch from "../components/EnableSwitch";
 import { useQuery } from "react-query";
 import auth from "../api/core/auth";
 import { fetchMe, getPatients } from "../api/userApi";
+import getPatientStatus from "../api/utils";
 
 const DashboardContainer = styled.div`
   padding: 20px;
@@ -139,7 +140,7 @@ const tableOptions: TableOptions = {
 const cols: Column[] = [
   {
     name: "Status",
-    data: "status",
+    data: (row) => <React.Fragment>{getPatientStatus(row)}</React.Fragment>,
     key: "status",
   },
   {
