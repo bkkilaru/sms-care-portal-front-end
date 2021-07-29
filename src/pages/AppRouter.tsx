@@ -7,12 +7,10 @@ import MessageTemplatePage from "./MessageTemplates";
 import PatientDashboard from "./PatientDashboard";
 import PatientRecords from "./PatientRecords";
 import AddPatientForm from "../components/AddPatientForm";
-import MessageTemplateForm from "../components/MessageTemplateForm";
-import AppContainer from "../components/AppContainer";
 import PrivateRoute from "../components/PrivateRoute";
 import PublicRoute from "../components/PublicRoute";
-
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Appointments from "../pages/Appointments/Appointments";
+import { BrowserRouter as Router, Switch } from "react-router-dom";
 
 const AppRouter = () => {
   return (
@@ -25,6 +23,7 @@ const AppRouter = () => {
         <PrivateRoute exact path="/profile" component={Profile} />
         <PrivateRoute exact path="/patients" component={PatientDashboard} />
         <PrivateRoute exact path="/patient/:id" component={PatientRecords} />
+        <PrivateRoute exact path="/appointments" component={Appointments} />
         <PrivateRoute
           exact
           path="/messageTemplate"

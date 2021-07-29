@@ -94,6 +94,12 @@ const Navbar = () => {
         </NavbarItem>
       </Link>
 
+      <Link to="/appointments">
+        <NavbarItem>
+          <i className="fa fa-calendar icon"></i>
+        </NavbarItem>
+      </Link>
+
       <NavbarItem onClick={() => auth.logout()}>
         <i className="fas fa-sign-out-alt icon"></i>
       </NavbarItem>
