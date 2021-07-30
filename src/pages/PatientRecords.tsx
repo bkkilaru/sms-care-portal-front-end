@@ -1,12 +1,8 @@
-import { time } from "console";
-import React from "react";
-import ImageGallery from "react-image-gallery";
+import React, { useRef } from "react";
 import "../styles/image-gallery.css";
 import styled, { createGlobalStyle } from "styled-components";
-import Table, { Column, SortOption, TableOptions } from "../components/Table";
-import ScheduledMessageTable from "../components/ScheduledMessageTable";
+import { Column, TableOptions } from "../components/Table";
 import ResultsTable from "../components/ResultsTable";
-import SearchBar from "../components/SearchBar";
 import {
   getPatientOutcomes,
   getPatient,
@@ -16,11 +12,10 @@ import { useQuery } from "react-query";
 import auth from "../api/core/auth";
 import { useParams } from "react-router-dom";
 import { SMSTile, Texter } from "../components/SMSTile";
+import AppointmentForm from "../components/AppointmentForm";
 
 const PatientRecords: React.FC = () => {
-  const onSearch = (query: string) => {
-    alert(`You searched ${query}`);
-  };
+  const patientName = useRef("");
   const id = useParams<{ id: string }>();
 
   const { data: patient, isLoading: loadingPatient } = useQuery(
@@ -47,8 +42,6 @@ const PatientRecords: React.FC = () => {
     }
   );
 
-  console.log(messages);
-
   if (!loadingMessages && messages) {
     for (const row of messages as any) {
       if (row.sender === "PATIENT") {
@@ -62,6 +55,7 @@ const PatientRecords: React.FC = () => {
   }
 
   const loadHeader = (res: any) => {
+    patientName.current = `${res.firstName} ${res.lastName}`;
     return (
       <Title>
         {res.firstName} {res.lastName}'s Patient Records
@@ -72,19 +66,17 @@ const PatientRecords: React.FC = () => {
   return (
     <DashboardContainer>
       <GlobalStyle />
-      <ImageGalleryStyles></ImageGalleryStyles>
       <div className="columns">
         <div className="column">
           {loadingPatient && <div>Loading...</div>}
           {patient && loadHeader(patient)}
           <Subtitle>Weekly Reports, Measurements, and SMS Chat logs</Subtitle>
-          <ImageGallery
-            infinite={false}
-            items={images}
-            showThumbnails={false}
-            showPlayButton={false}
-            showFullscreenButton={false}
-          ></ImageGallery>
+          <div style={{ marginBottom: "10px" }}>
+            <AppointmentForm
+              patientName={patientName.current}
+              patientID={id.id}
+            />
+          </div>
 
           {loadingOutcomes && <div>Loading...</div>}
           {outcomes && (
@@ -116,21 +108,6 @@ const table1Options: TableOptions = {
   sortsChoiceEnabled: false,
 };
 
-const images = [
-  {
-    original: "https://picsum.photos/id/1018/1000/600/",
-    thumbnail: "https://picsum.photos/id/1018/250/150/",
-  },
-  {
-    original: "https://picsum.photos/id/1015/1000/600/",
-    thumbnail: "https://picsum.photos/id/1015/250/150/",
-  },
-  {
-    original: "https://picsum.photos/id/1019/1000/600/",
-    thumbnail: "https://picsum.photos/id/1019/250/150/",
-  },
-];
-
 // columns for the right side of the page
 const cols: Column[] = [
   {
@@ -147,11 +124,11 @@ const cols: Column[] = [
     // need to create logic for the text color, possible do it down in activetext
     name: "Analysis",
     data: (row) =>
-      classifyNumeric(row.value) == "Green" ? (
+      classifyNumeric(row.value) === "Green" ? (
         <ActiveTextG>{classifyNumeric(row.value)}</ActiveTextG>
-      ) : classifyNumeric(row.value) == "Yellow" ? (
+      ) : classifyNumeric(row.value) === "Yellow" ? (
         <ActiveTextY>{classifyNumeric(row.value)}</ActiveTextY>
-      ) : classifyNumeric(row.value) == "Red" ? (
+      ) : classifyNumeric(row.value) === "Red" ? (
         <ActiveTextR>{classifyNumeric(row.value)}</ActiveTextR>
       ) : (
         <ActiveTextB>{classifyNumeric(row.value)}</ActiveTextB>
@@ -202,47 +179,6 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
-const SearchBarContainer = styled.div``;
-
-const CheckBox = styled.input`
-  width: 11.51px;
-  height: 12px;
-  left: 653.93px;
-  top: 736px;
-
-  font-family: Font Awesome 5 Free;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 10px;
-  line-height: 11px;
-  /* identical to box height */
-
-  color: #404040;
-`;
-
-const ExportButton = styled.button`
-  float: right;
-
-  padding: 9px 20px;
-  background-color: #f29da4 !important;
-  font-size: 13px !important;
-  border-radius: 15px !important;
-  color: white !important;
-  border: none !important;
-  font-weight: 600;
-
-  &:hover {
-    box-shadow: 5px 5px 10px rgba(221, 225, 231, 1) !important;
-    border: none !important;
-    cursor: pointer;
-  }
-
-  &:focus {
-    box-shadow: 5px 5px 10px rgba(221, 225, 231, 1) !important;
-    border: none !important;
-  }
-`;
-
 const ActiveTextG = styled.p`
   color: #b4d983;
   font-weight: 800;
@@ -260,44 +196,6 @@ const ActiveTextB = styled.p`
   font-weight: 800;
 `;
 
-const ImageGalleryStyles = createGlobalStyle`
-    .image-gallery {
-        padding: 40px 100px; 
-        background-color: white;
-        margin-bottom: 30px;
-        border-radius: 20px;
-        box-shadow: 5px 5px 10px rgba(221, 225, 231, 0.5);
-    }
-
-    .image-gallery-svg {
-        stroke-width: 1.5px;
-    }
-
-    .image-gallery-right-nav {
-        right: -90px;
-    }
-
-    .image-gallery-left-nav {
-        left: -90px;
-    }
-
-    .image-gallery-left-nav, .image-gallery-right-nav {
-        filter: none;
-        color: #F29DA4;
-
-        &:hover {
-            filter: drop-shadow(0 0 4px #c4c4c4);
-            color: #F29DA4;
-        }
-
-        &:focus {
-            filter: drop-shadow(0 0 4px #c4c4c4);
-            color: #F29DA4;
-            outline: none;
-        }
-    }
-`;
-
 function classifyNumeric(input: any) {
   var number = parseInt(input);
   if (number < 70) {
@@ -313,35 +211,6 @@ function classifyNumeric(input: any) {
   } else {
     return ">=301";
   }
-}
-
-function outcomesToCSV(data: any) {
-  const csvRows = [];
-  const headers = ["Type", "Measurement", "Classification", "Date"];
-  csvRows.push(headers.join(","));
-  for (const row of data) {
-    const values = [
-      "Blood Glucose",
-      row.value,
-      classifyNumeric(row.value),
-      new Date(row.date).toString(),
-    ];
-    csvRows.push(values.join(","));
-  }
-  return csvRows.join("\n");
-}
-
-function downloadCSV(data: string, id: string) {
-  const csvObj = new Blob([data], { type: "text/csv" });
-  const url = window.URL.createObjectURL(csvObj);
-  const a = document.createElement("a");
-  a.setAttribute("hidden", "");
-  a.setAttribute("href", url);
-  const fileName = "Patient_".concat(id, "_Outcomes.csv");
-  a.setAttribute("download", fileName);
-  document.body.append(a);
-  a.click();
-  document.body.removeChild(a);
 }
 
 export default PatientRecords;
