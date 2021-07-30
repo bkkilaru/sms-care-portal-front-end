@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Navbar from "./Navbar";
 import "../styles/main.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const FooterContainer = styled.div`
   position: fixed;

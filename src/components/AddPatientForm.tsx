@@ -37,7 +37,7 @@ const Button = styled.button`
   }
 `;
 
-const FormContainer = styled.div`
+export const FormContainer = styled.div`
   box-shadow: 5px 5px 10px rgba(221, 225, 231, 0.5);
   padding: 30px;
   background-color: white;
@@ -47,7 +47,7 @@ const FormContainer = styled.div`
   border-radius: 20px;
 `;
 
-const AddPatientHeader = styled.h1`
+export const AddPatientHeader = styled.h1`
   font-weight: 800;
   font-size: 36px;
   color: #637792;
