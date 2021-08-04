@@ -169,6 +169,7 @@ const MessageTemplateForm: React.FC = () => {
             <label>Select message type: </label>
             <Field as="select" name="type">
               <option value="Initial">Initial</option>
+              <option value="Nudge">Nudge</option>
               <option value="Green">Green</option>
               <option value="Yellow">Yellow</option>
               <option value="Red">Red</option>
